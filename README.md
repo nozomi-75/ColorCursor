@@ -6,7 +6,14 @@ Special thanks to safeusernameig.
 
 ## Instructions
 
-Download the script (`ColorCursor-NG.sh`) from this repository. To give execute permissions to the script, run `chmod +x ./ColorCursor-NG.sh`. Finally, to run the script, execute `./ColorCursor-NG.sh`.
+```
+wget https://raw.githubusercontent.com/nozomi-75/ColorCursor/refs/heads/main/ColorCursor-NG.sh
+bash ColorCursor-NG.sh
+```
+```
+curl -O https://raw.githubusercontent.com/nozomi-75/ColorCursor/refs/heads/main/ColorCursor-NG.sh
+bash ColorCursor-NG.sh
+```
 
 ## Note
 
