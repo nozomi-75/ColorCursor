@@ -53,23 +53,7 @@ A specific cursor map can be found under the `copy_assets` function of the scrip
 
 This is in line with the `FILES` array at the beginning of the script. Therefore, it assumes that you have the following filenames.
 
-- Alternate
-- Busy
-- Diagonal1
-- Diagonal2
-- Handwriting
-- Help
-- Horizontal
-- Link
-- Move
-- Normal
-- Person
-- Pin
-- Precision
-- Text
-- Unavailable
-- Vertical
-- Working
+> Alternate, Busy, Diagonal1, Diagonal2, Handwriting, Help, Horizontal, Link, Move, Normal, Person, Pin, Precision, Text, Unavailable, Vertical, Working
 
 ## Note
 
