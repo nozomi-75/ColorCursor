@@ -4,6 +4,7 @@
 FILES=(Alternate Busy Diagonal1 Diagonal2 Handwriting Help Horizontal Link Move Normal Person Pin Precision Text Unavailable Vertical Working)
 
 check_dependencies() {
+    echo "Checking dependencies..."
     for cmd in pip python3 wget zip; do
         if ! command -v "$cmd" &> /dev/null; then
             echo "Error: $cmd is not installed. Please install dependencies and try again."
