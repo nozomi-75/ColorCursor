@@ -29,6 +29,7 @@ First, you need to download and extract the theme you want to convert. You may t
 
 ```bash
 https://raw.githubusercontent.com/nozomi-75/ColorCursor/refs/heads/main/ColorCursor.sh
+bash ColorCursor.sh
 ```
 
 Follow the on-screen prompts to process the cursor assets.
