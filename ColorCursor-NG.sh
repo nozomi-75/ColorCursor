@@ -1,4 +1,5 @@
 #!/bin/bash
+# ColorCursor - A script to download Project Sekai cursors on Linux
 
 # Important configuration variables
 BASE_URL="https://www.colorfulstage.com/upload_images/media/Download"

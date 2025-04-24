@@ -1,9 +1,7 @@
 #!/bin/bash
+# ColorCursor - A script to convert Windows cursors to Linux format
 
-asset_source_directory="Miku"
-asset_destination_directory="Miku-L"
-
-echo "Script running, standby..."
+FILES=(Alternate Busy Diagonal1 Diagonal2 Handwriting Help Horizontal Link Move Normal Person Pin Precision Text Unavailable Vertical Working)
 
 check_dependencies() {
     for cmd in pip python3 wget zip; do
@@ -19,52 +17,60 @@ check_dependencies() {
     fi
 }
 
-check_dependencies
-python3 -m venv ~/.venvs/win2xcur-env > /dev/null 2>&1
-source ~/.venvs/win2xcur-env/bin/activate > /dev/null 2>&1
-pip install win2xcur > /dev/null 2>&1
+setup_python_env() {
+    python3 -m venv ~/.venvs/win2xcur-env > /dev/null 2>&1
+    source ~/.venvs/win2xcur-env/bin/activate > /dev/null 2>&1
+    pip install win2xcur > /dev/null 2>&1
+}
 
-cd ~/Downloads > /dev/null 2>&1
-
-if [ ! -d "$asset_source_directory" ]; then
-    echo "Error: Source directory '$asset_source_directory' does not exist in $(pwd)."
-    echo "Please make sure the folder is in the correct location."
-    exit 1
-fi
-
-mkdir -p "$asset_destination_directory/cursors"
-
-read -p "Are you converting animated assets? (y/n): " answer
-case ${answer:0:1} in
-    y|Y )
-        format=".ani"
-    ;;
-    * )
-        format=".cur"
-    ;;
-esac
-
-files=(Alternate Busy Diagonal1 Diagonal2 Handwriting Help Horizontal Link Move Normal Person Pin Precision Text Unavailable Vertical Working)
-
-missing=0
-for f in "${files[@]}"; do
-    if [ ! -f "$asset_source_directory/$f$format" ]; then
-        echo "Missing file: $asset_source_directory/$f$format"
-        missing=1
+identify_directories() {
+    read -p "Enter the path to the source directory: " asset_source_directory
+    if [ ! -d "$asset_source_directory" ]; then
+        echo "Error: Source directory '$asset_source_directory' does not exist."
+        echo "Please make sure the folder is in the correct location."
+        exit 1
     fi
-done
 
-if [ "$missing" -eq 1 ]; then
-    echo ""
-    echo "Error: Some required $format files are missing."
-    echo "Please double-check your asset format and folder."
-    rm -rf "$asset_destination_directory"
-    exit 1
-fi
+    read -p "Enter the path to the destination directory: " asset_destination_directory
+    cursor_directory="$asset_destination_directory/cursors"
+    mkdir -p "$cursor_directory"
+}
 
-for f in "${files[@]}"; do
-    win2xcur "$asset_source_directory/$f$format" -o "$asset_destination_directory/"
-done
+asset_format() {
+    read -p "Are you converting animated assets? (y/n): " answer
+    case ${answer:0:1} in
+        y|Y )
+            format=".ani"
+        ;;
+        * )
+            format=".cur"
+        ;;
+    esac
+}
+
+check_files() {
+    missing=0
+    for f in "${FILES[@]}"; do
+        if [ ! -f "$asset_source_directory/$f$format" ]; then
+            echo "Missing file: $asset_source_directory/$f$format"
+            missing=1
+        fi
+    done
+
+    if [ "$missing" -eq 1 ]; then
+        echo ""
+        echo "Error: Some required $format files are missing."
+        echo "Please double-check your asset format and folder."
+        rm -rf "$asset_destination_directory"
+        exit 1
+    fi
+}
+
+initial_conversion() {
+    for f in "${FILES[@]}"; do
+        win2xcur "$asset_source_directory/$f$format" -o "$asset_destination_directory/"
+    done
+}
 
 copy_assets() {
     declare -A cursor_map=(
@@ -105,49 +111,70 @@ copy_assets() {
     done
 }
 
-copy_assets
+initial_conversion_cleanup() {
+    for f in "${FILES[@]}"; do
+        rm -f "$asset_destination_directory/$f"
+    done
+}
 
-for f in "${files[@]}"; do
-    rm -f "$asset_destination_directory/$f"
-done
+build_theme_files() {
+    read -p "Enter theme name: " theme_dirname
+    mv "$asset_destination_directory" "$theme_dirname"
 
-read -p "Enter theme name: " theme_dirname
-mv "$asset_destination_directory" "$theme_dirname"
-
-cat > "$theme_dirname/cursor.theme" <<EOF
+    cat > "$theme_dirname/cursor.theme" <<EOF
 [Icon Theme]
 Name=$theme_dirname
 EOF
 
-cat > "$theme_dirname/index.theme" <<EOF
+    cat > "$theme_dirname/index.theme" <<EOF
 [Icon Theme]
 Name=$theme_dirname
-Comment=Linux port of Project Sekai cursors. Copyright of SEGA Corp. and Colorful Palette Inc. Hatsune Miku is copyright of Crypton Future Media Inc.
+Comment=Linux cursor theme converted by ColorCursor.
 EOF
 
-echo -e "\n"
+    echo -e "\n"
+}
 
-read -p "Do you want to zip the theme? (y/n): " answer
-case ${answer:0:1} in
-    y|Y )
-        sudo apt install zip > /dev/null 2>&1
-        zip -r "$theme_dirname".zip "$theme_dirname" > /dev/null 2>&1
-        echo -e "Successfully zipped theme.\n"
-    ;;
-    * )
-        echo -e "Skipped zipping theme.\n"
-    ;;
-esac
+zip_theme() {
+    read -p "Do you want to zip the theme? (y/n): " answer
+    case ${answer:0:1} in
+        y|Y )
+            zip -r "$theme_dirname".zip "$theme_dirname" > /dev/null 2>&1
+            echo -e "Successfully zipped theme.\n"
+        ;;
+        * )
+            echo -e "Skipped zipping theme.\n"
+        ;;
+    esac
+}
 
-read -p "Do you want to install this theme system-wide? (y/n): " answer
-case ${answer:0:1} in
-    y|Y )
-        sudo cp -r "$theme_dirname" /usr/share/icons/
-        echo -e "Successfully installed theme.\n"
-    ;;
-    * )
-        echo -e "Skipped installation of theme.\n"
-    ;;
-esac
+install_theme() {
+    read -p "Do you want to install the theme? (y/n): " answer
+    case ${answer:0:1} in
+        y|Y )
+            sudo cp -r "$theme_dirname" ~/.icons/
+            echo -e "Successfully installed theme.\n"
+        ;;
+        * )
+            echo -e "Skipped installation of theme.\n"
+        ;;
+    esac
+}
 
-echo -e "\e[1;32mFinished setup. Enjoy ColorCursor!\n"
+main() {
+    check_dependencies
+    setup_python_env
+    identify_directories
+    asset_format
+    check_files
+    initial_conversion
+    copy_assets
+    initial_conversion_cleanup
+    build_theme_files
+    zip_theme
+    install_theme
+
+    echo -e "\e[1;32mColorCursor setup complete!\n"
+}
+
+main
