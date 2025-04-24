@@ -47,6 +47,30 @@ Do not feed the output directly to `bash`, as it may result in a never-ending lo
 
 Follow the on-screen prompts to select and process the cursor assets.
 
+## Asset names
+
+A specific cursor map can be found under the `copy_assets` function of the scripts. This is used to copy and rename the assets to follow the Linux cursor format.
+
+This is in line with the `FILES` array at the beginning of the script. Therefore, it assumes that you have the following filenames.
+
+- Alternate
+- Busy
+- Diagonal1
+- Diagonal2
+- Handwriting
+- Help
+- Horizontal
+- Link
+- Move
+- Normal
+- Person
+- Pin
+- Precision
+- Text
+- Unavailable
+- Vertical
+- Working
+
 ## Note
 
 Windows cursor assets are typically limited to <20 items, which is significantly fewer than the ~100 assets typically used in Linux themes (e.g., [Yaru](https://github.com/ubuntu/yaru), [Breeze](https://invent.kde.org/plasma/breeze)). As a result:
