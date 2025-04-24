@@ -27,11 +27,12 @@ Make sure these dependencies are installed on your system before running the scr
 
 You can use either `wget` or `curl` to download and execute the script.
 
-```
+```bash
 wget https://raw.githubusercontent.com/nozomi-75/ColorCursor/refs/heads/main/ColorCursor-NG.sh
 bash ColorCursor-NG.sh
 ```
-```
+
+```bash
 curl -O https://raw.githubusercontent.com/nozomi-75/ColorCursor/refs/heads/main/ColorCursor-NG.sh
 bash ColorCursor-NG.sh
 ```
@@ -43,6 +44,7 @@ Follow the on-screen prompts to select and process the cursor assets.
 ## Note
 
 The PRJSK cursor assets are limited to 17 items, which is significantly fewer than the ~140 assets typically used in Linux themes (e.g., [Yaru](https://github.com/ubuntu/yaru)). As a result:
+
 - Some assets will fallback to the "Normal" cursor.
 - There may be occasional mismatches between assets.
 
