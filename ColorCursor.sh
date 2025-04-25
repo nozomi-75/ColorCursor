@@ -33,35 +33,27 @@ identify_directories() {
     fi
 
     read -p "Enter the path to the destination directory: " asset_destination_directory
+    if [ "$asset_destination_directory" == "$asset_source_directory" ]; then
+        echo "Error: Source and destination directories cannot be the same."
+        exit 1
+    fi
     cursor_directory="$asset_destination_directory/cursors"
     mkdir -p "$cursor_directory"
-}
-
-asset_format() {
-    read -p "Are you converting animated assets? (y/n): " answer
-    case ${answer:0:1} in
-        y|Y )
-            format=".ani"
-        ;;
-        * )
-            format=".cur"
-        ;;
-    esac
 }
 
 check_files() {
     missing=0
     for f in "${FILES[@]}"; do
-        if [ ! -f "$asset_source_directory/$f$format" ]; then
-            echo "Missing file: $asset_source_directory/$f$format"
+        if [ ! -f "$asset_source_directory/$f.cur" ] && [ ! -f "$asset_source_directory/$f.ani" ]; then
+            echo "Missing file: $asset_source_directory/$f (.cur or .ani)"
             missing=1
         fi
     done
 
     if [ "$missing" -eq 1 ]; then
         echo ""
-        echo "Error: Some required $format files are missing."
-        echo "Please double-check your asset format and folder."
+        echo "Error: Some required files are missing."
+        echo "Please double-check your asset folder."
         rm -rf "$asset_destination_directory"
         exit 1
     fi
@@ -69,7 +61,11 @@ check_files() {
 
 initial_conversion() {
     for f in "${FILES[@]}"; do
-        win2xcur "$asset_source_directory/$f$format" -o "$asset_destination_directory/"
+        if [ -f "$asset_source_directory/$f.cur" ]; then
+            win2xcur "$asset_source_directory/$f.cur" -o "$asset_destination_directory/"
+        elif [ -f "$asset_source_directory/$f.ani" ]; then
+            win2xcur "$asset_source_directory/$f.ani" -o "$asset_destination_directory/"
+        fi
     done
 }
 
@@ -119,8 +115,7 @@ initial_conversion_cleanup() {
 }
 
 build_theme_files() {
-    read -p "Enter theme name: " theme_dirname
-    mv "$asset_destination_directory" "$theme_dirname"
+    theme_dirname=$(basename "$asset_source_directory")
 
     cat > "$theme_dirname/cursor.theme" <<EOF
 [Icon Theme]
@@ -166,7 +161,6 @@ main() {
     check_dependencies
     setup_python_env
     identify_directories
-    asset_format
     check_files
     initial_conversion
     copy_assets

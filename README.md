@@ -1,5 +1,7 @@
 # ColorCursor
 
+> The converted output of this script are not used by Snap or Flatpak packages. You would have to package the theme on your own.
+
 A collection of scripts to download and convert Windows cursor assets into Linux-compatible themes. This repository includes tools for general asset conversion and a specialized script for downloading and converting **Project Sekai** cursor assets.
 
 Special thanks to `safeusernameig`.
