@@ -25,20 +25,47 @@ setup_python_env() {
 }
 
 identify_directories() {
-    read -p "Enter the path to the source directory: " asset_source_directory
-    if [ ! -d "$asset_source_directory" ]; then
-        echo "Error: Source directory '$asset_source_directory' does not exist."
-        echo "Please make sure the folder is in the correct location."
-        exit 1
-    fi
+    while true; do
+        while true; do
+            read -p "Enter the path to the source directory: " asset_source_directory
+            if [ -d "$asset_source_directory" ]; then
+                break
+            else
+                echo "Error: Source directory '$asset_source_directory' does not exist. Please try again."
+            fi
+        done
 
-    read -p "Enter the path to the destination directory: " asset_destination_directory
-    if [ "$asset_destination_directory" == "$asset_source_directory" ]; then
-        echo "Error: Source and destination directories cannot be the same."
-        exit 1
-    fi
-    cursor_directory="$asset_destination_directory/cursors"
-    mkdir -p "$cursor_directory"
+        while true; do
+            read -p "Enter the path to the destination directory: " asset_destination_directory
+            if [ "$asset_destination_directory" != "$asset_source_directory" ]; then
+                break
+            elif [ -d "$asset_destination_directory" ]; then
+                read -p "Warning: Destination directory '$asset_destination_directory' already exists. Overwrite? (y/n): " overwrite
+                case ${overwrite:0:1} in
+                    y|Y )
+                        break
+                    ;;
+                    * )
+                        echo "Please enter a different destination directory."
+                    ;;
+                esac
+            else
+                echo "Error: Source and destination directories cannot be the same. Please try again."
+            fi
+        done
+
+        read -p "Do you confirm the above directories? (y/n): " answer
+        case ${answer:0:1} in
+            y|Y )
+                echo "Source directory: $asset_source_directory"
+                echo "Destination directory: $asset_destination_directory"
+                break 2
+            ;;
+            * )
+                echo "Please re-enter the directories."
+            ;;
+        esac
+    done
 }
 
 check_files() {
@@ -57,6 +84,9 @@ check_files() {
         rm -rf "$asset_destination_directory"
         exit 1
     fi
+
+    cursor_directory="$asset_destination_directory/cursors"
+    mkdir -p "$cursor_directory"
 }
 
 initial_conversion() {
@@ -115,7 +145,7 @@ initial_conversion_cleanup() {
 }
 
 build_theme_files() {
-    theme_dirname=$(basename "$asset_source_directory")
+    theme_dirname=$(basename "$asset_destination_directory")
 
     cat > "$theme_dirname/cursor.theme" <<EOF
 [Icon Theme]
