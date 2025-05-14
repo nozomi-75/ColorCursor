@@ -38,7 +38,7 @@ Follow the on-screen prompts to process the cursor assets.
 
 ## Download PRJSK themes (`ColorCursor-NG`)
 
-You may download and run the script as follows.
+`ColorCursor-NG` fetches the original assets from Colorful Stage. You may view them [here](https://colorfulstage.com/media/download/). You may download and run the script as follows.
 
 ```bash
 wget https://raw.githubusercontent.com/nozomi-75/ColorCursor/refs/heads/main/ColorCursor-NG.sh
