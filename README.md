@@ -30,7 +30,7 @@ Make sure these dependencies are installed on your system before running the scr
 First, you need to download and extract the theme you want to convert. You may then download and run the script as follows.
 
 ```bash
-https://raw.githubusercontent.com/nozomi-75/ColorCursor/refs/heads/main/ColorCursor.sh
+wget https://raw.githubusercontent.com/nozomi-75/ColorCursor/refs/heads/main/ColorCursor.sh
 bash ColorCursor.sh
 ```
 
