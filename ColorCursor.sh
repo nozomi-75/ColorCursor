@@ -59,6 +59,7 @@ identify_directories() {
             y|Y )
                 echo "Source directory: $asset_source_directory"
                 echo "Destination directory: $asset_destination_directory"
+                theme_dirname=$(basename "$asset_destination_directory")
                 break 2
             ;;
             * )
@@ -145,16 +146,16 @@ initial_conversion_cleanup() {
 }
 
 build_theme_files() {
-    theme_dirname=$(basename "$asset_destination_directory")
+    mkdir -p "$asset_destination_directory"
 
-    cat > "$theme_dirname/cursor.theme" <<EOF
+    cat > "$asset_destination_directory/cursor.theme" <<EOF
 [Icon Theme]
-Name=$theme_dirname
+Name=$(basename "$asset_destination_directory")
 EOF
 
-    cat > "$theme_dirname/index.theme" <<EOF
+    cat > "$asset_destination_directory/index.theme" <<EOF
 [Icon Theme]
-Name=$theme_dirname
+Name=$(basename "$asset_destination_directory")
 Comment=Linux cursor theme converted by ColorCursor.
 EOF
 
@@ -165,7 +166,7 @@ zip_theme() {
     read -p "Do you want to zip the theme? (y/n): " answer
     case ${answer:0:1} in
         y|Y )
-            zip -r "$theme_dirname".zip "$theme_dirname" > /dev/null 2>&1
+            zip -r "${theme_dirname}.zip" "$asset_destination_directory" > /dev/null 2>&1
             echo -e "Successfully zipped theme.\n"
         ;;
         * )
@@ -178,7 +179,8 @@ install_theme() {
     read -p "Do you want to install the theme? (y/n): " answer
     case ${answer:0:1} in
         y|Y )
-            sudo cp -r "$theme_dirname" ~/.icons/
+            mkdir -p ~/.icons/
+            cp -r "$asset_destination_directory" ~/.icons/
             echo -e "Successfully installed theme.\n"
         ;;
         * )
